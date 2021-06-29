@@ -39,41 +39,41 @@ jobs:
       run: go test -v
       working-directory: app
 
-    - name: Stage packaging area
-      run: mkdir staging && mv app/open-dmr staging/
+    # - name: Stage packaging area
+    #   run: mkdir staging && mv app/open-dmr staging/
 
-    # - name: Download data (temp snippet)
-    #   run: mv app/test_data/snippet.xml.zip ./data.zip
+    # # - name: Download data (temp snippet)
+    # #   run: mv app/test_data/snippet.xml.zip ./data.zip
 
-    - name: Install data deps
-      run: sudo apt -y install aria2 lftp
+    # - name: Install data deps
+    #   run: sudo apt -y install aria2 lftp
 
-    - name: Download data (full)
-      run: ./download_data.sh
+    # - name: Download data (full)
+    #   run: ./download_data.sh
 
-    - name: Load data into DB
-      run: ./open-dmr -load ../data.zip
-      working-directory: staging
+    # - name: Load data into DB
+    #   run: ./open-dmr -load ../data.zip
+    #   working-directory: staging
 
-    - name: Log in to the Container registry
-      uses: docker/login-action@v1
-      with:
-        registry: ${{ env.REGISTRY }}
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+    # - name: Log in to the Container registry
+    #   uses: docker/login-action@v1
+    #   with:
+    #     registry: ${{ env.REGISTRY }}
+    #     username: ${{ github.actor }}
+    #     password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Extract metadata (tags, labels) for Docker
-      id: meta
-      uses: docker/metadata-action@v3
-      with:
-        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+    # - name: Extract metadata (tags, labels) for Docker
+    #   id: meta
+    #   uses: docker/metadata-action@v3
+    #   with:
+    #     images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-    - name: Build and push
-      id: docker_build
-      uses: docker/build-push-action@v2
-      with:
-        push: true
-        context: staging/
-        file: deployment.dockerfile
-        tags: ${{ steps.meta.outputs.tags }}
-        labels: ${{ steps.meta.outputs.labels }}
+    # - name: Build and push
+    #   id: docker_build
+    #   uses: docker/build-push-action@v2
+    #   with:
+    #     push: true
+    #     context: staging/
+    #     file: deployment.dockerfile
+    #     tags: ${{ steps.meta.outputs.tags }}
+    #     labels: ${{ steps.meta.outputs.labels }}

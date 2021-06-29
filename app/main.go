@@ -26,7 +26,7 @@ func plateLookup(c echo.Context) error {
 	return c.JSONPretty(200, vehicle, "    ")
 }
 
-func server() {
+func server(host string) {
 	e := echo.New()
 
 	// Middleware
@@ -37,10 +37,11 @@ func server() {
 	e.GET("/lookup/:plate", plateLookup)
 
 	// Start server
-	e.Logger.Fatal(e.Start(":1323"))
+	e.Logger.Fatal(e.Start(host))
 }
 
 func main() {
+	var host = flag.String("host", "127.0.0.1:1323", "Load data to DB from file")
 	var dataPath = flag.String("load", "", "Load data to DB from file")
 	flag.Parse()
 
@@ -57,5 +58,5 @@ func main() {
 		return
 	}
 
-	server()
+	server(*host)
 }
