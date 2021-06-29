@@ -52,6 +52,7 @@ jobs:
         push: true
         tags: mj3052/open-dmr:latest
         context: staging/
+        file: deployment.dockerfile
 
     # - name: Zip DB
     #   run: zip -r database.zip database/
