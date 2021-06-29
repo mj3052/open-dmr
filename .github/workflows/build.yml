@@ -1,4 +1,4 @@
-name: Go
+name: Build open-dmr
 
 on:
   push:
@@ -18,18 +18,18 @@ jobs:
       with:
         go-version: 1.16
 
-    - name: Build
-      run: go build -v
-      working-directory: app
-      
     - uses: actions/cache@v2
       with:
         path: |
           ~/.cache/go-build
           ~/go/pkg/mod
-        key: ${{ runner.os }}-go-${{ hashFiles('./go.sum') }}
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
         restore-keys: |
           ${{ runner.os }}-go-
+
+    - name: Build
+      run: go build -v
+      working-directory: app
 
     - name: Test
       run: go test -v
