@@ -34,3 +34,18 @@ jobs:
     - name: Test
       run: go test -v
       working-directory: app
+
+    - name: Download data (temp snippet for now)
+      run: mv app/test_data/snippet.xml.zip ./data.zip
+
+    - name: Load data into DB
+      run: ./app/open-dmr -load data.zip
+
+    - name: Zip DB
+      run: zip -r database.zip database/
+
+    - name: DB Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: database
+        path: database.zip

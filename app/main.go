@@ -44,7 +44,7 @@ func main() {
 	var dataPath = flag.String("load", "", "Load data to DB from file")
 	flag.Parse()
 
-	db, err := badger.Open(badger.DefaultOptions("./badger"))
+	db, err := badger.Open(badger.DefaultOptions("./database"))
 	if err != nil {
 		log.Fatal(err)
 	}
