@@ -35,17 +35,29 @@ jobs:
       run: go test -v
       working-directory: app
 
+    - name: Stage packaging area
+      run: mkdir staging
+
     - name: Download data (temp snippet for now)
-      run: mv app/test_data/snippet.xml.zip ./data.zip
+      run: mv app/test_data/snippet.xml.zip ./data.zip && mv app/open-dmr staging/
 
     - name: Load data into DB
-      run: ./app/open-dmr -load data.zip
+      run: ./open-dmr -load ../data.zip
+      working-directory: staging
 
-    - name: Zip DB
-      run: zip -r database.zip database/
-
-    - name: DB Artifact
-      uses: actions/upload-artifact@v2
+    - name: Build and push
+      id: docker_build
+      uses: docker/build-push-action@v2
       with:
-        name: database
-        path: database.zip
+        push: true
+        tags: mj3052/open-dmr:latest
+        context: staging/
+
+    # - name: Zip DB
+    #   run: zip -r database.zip database/
+
+    # - name: DB Artifact
+    #   uses: actions/upload-artifact@v2
+    #   with:
+    #     name: database
+    #     path: database.zip
