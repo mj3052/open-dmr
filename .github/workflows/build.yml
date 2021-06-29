@@ -40,10 +40,16 @@ jobs:
       working-directory: app
 
     - name: Stage packaging area
-      run: mkdir staging
+      run: mkdir staging && mv app/open-dmr staging/
 
-    - name: Download data (temp snippet for now)
-      run: mv app/test_data/snippet.xml.zip ./data.zip && mv app/open-dmr staging/
+    # - name: Download data (temp snippet)
+    #   run: mv app/test_data/snippet.xml.zip ./data.zip
+
+    - name: Install data deps
+      run: sudo apt -y install aria2 lftp
+
+    - name: Download data (full)
+      run: ./download_data.sh
 
     - name: Load data into DB
       run: ./open-dmr -load ../data.zip
