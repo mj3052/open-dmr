@@ -54,6 +54,11 @@ func (vdb *VehicleDB) LoadData(filename string) {
 			fmt.Printf("%d items inserted\n", i)
 		}
 
+		// Break early right now
+		if i > 100000 {
+			break
+		}
+
 	}
 
 	// Make sure to use last bit of buffer

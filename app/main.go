@@ -46,6 +46,7 @@ func main() {
 	flag.Parse()
 
 	db, err := badger.Open(badger.DefaultOptions("./database"))
+
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -55,6 +56,7 @@ func main() {
 
 	if *dataPath != "" {
 		vdb.LoadData(*dataPath)
+		db.Sync()
 		return
 	}
 
