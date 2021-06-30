@@ -55,7 +55,7 @@ func (vdb *VehicleDB) LoadData(filename string) {
 		}
 
 		// Break early right now
-		if i > 100000 {
+		if i > 500000 {
 			break
 		}
 
