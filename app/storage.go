@@ -15,17 +15,19 @@ type VehicleDB struct {
 
 // Insert a batch of vehicles into the DB
 func (vdb *VehicleDB) processBatch(batch []Vehicle) {
-	err := vdb.db.Update(func(txn *badger.Txn) error {
-		for _, v := range batch {
-			b, _ := json.Marshal(v)
-			txn.Set([]byte("plates/"+v.Plate), b)
-		}
-		return nil
-	})
 
-	if err != nil {
-		log.Fatal(err)
+	wb := vdb.db.NewWriteBatch()
+	defer wb.Cancel()
+
+	for _, v := range batch {
+		b, _ := json.Marshal(v)
+		err := wb.Set([]byte("plates/"+v.Plate), b) // Will create txns as needed.
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
+
+	wb.Flush()
 }
 
 // LoadData loads the given DMV zip into the DB
