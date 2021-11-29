@@ -1,6 +1,5 @@
 *.xml
 *.zip
 .DS_STORE
-database
-test-database
 open-dmr
+*.db

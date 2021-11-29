@@ -2,11 +2,16 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
+	"os"
 
-	badger "github.com/dgraph-io/badger/v3"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
+
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 var vdb *VehicleDB
@@ -34,31 +39,36 @@ func server(host string) {
 	e.Use(middleware.Recover())
 
 	// Routes
-	e.GET("/lookup/:plate", plateLookup)
+	e.GET("/:plate", plateLookup)
 
 	// Start server
 	e.Logger.Fatal(e.Start(host))
 }
 
 func main() {
-	var host = flag.String("host", "127.0.0.1:1323", "Load data to DB from file")
+	var host = flag.String("host", "0.0.0.0", "Load data to DB from file")
 	var dataPath = flag.String("load", "", "Load data to DB from file")
 	flag.Parse()
 
-	db, err := badger.Open(badger.DefaultOptions("./database"))
+	db, err := gorm.Open(sqlite.Open("dmr.db"), &gorm.Config{Logger: logger.Default.LogMode(logger.Silent), SkipDefaultTransaction: *dataPath != ""})
 
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer db.Close()
 
 	vdb = &VehicleDB{db}
 
 	if *dataPath != "" {
+		db.AutoMigrate(&Vehicle{})
 		vdb.LoadData(*dataPath)
-		db.Sync()
 		return
 	}
 
-	server(*host)
+	// Port from ENV
+	p := os.Getenv("PORT")
+	if p == "" {
+		p = "1337"
+	}
+
+	server(fmt.Sprintf("%s:%s", *host, p))
 }

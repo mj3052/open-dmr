@@ -17,12 +17,11 @@ type VehicleBaseInfo struct {
 }
 
 type Vehicle struct {
-	Plate       string `xml:"RegistreringNummerNummer"`
+	Plate       string `xml:"RegistreringNummerNummer" gorm:"primaryKey"`
 	VehicleType string `xml:"KoeretoejArtNavn"`
 
-	BaseInfo VehicleBaseInfo `xml:"KoeretoejOplysningGrundStruktur"`
+	BaseInfo VehicleBaseInfo `xml:"KoeretoejOplysningGrundStruktur" gorm:"embedded"`
 
-	//
 	End string `xml:"RegistreringNummerUdloebDato"`
 
 	Usage string `xml:"KoeretoejAnvendelseStruktur>KoeretoejAnvendelseNavn"`

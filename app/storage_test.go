@@ -2,20 +2,23 @@ package main
 
 import (
 	"log"
+	"os"
 	"testing"
 
-	badger "github.com/dgraph-io/badger/v3"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
 
 func TestStorePlates(t *testing.T) {
-	db, err := badger.Open(badger.DefaultOptions("./test-database"))
+	os.Remove("test-db.db")
+
+	db, err := gorm.Open(sqlite.Open("test-db.db"), &gorm.Config{SkipDefaultTransaction: true})
 
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer db.Close()
 
-	db.DropAll()
+	db.AutoMigrate(&Vehicle{})
 
 	vdb = &VehicleDB{db}
 
@@ -30,12 +33,12 @@ func TestStorePlates(t *testing.T) {
 	v, err = vdb.VehicleLookup("XP22655")
 
 	if err != nil {
-		t.Error("Error while looking up plate:", err)
+		t.Error("Error while looking up plate:", err, v)
 	}
 
 	if v.Plate != "XP22655" {
 		t.Errorf("Test plate not correct??")
 	}
 
-	db.DropAll()
+	os.Remove("test-db.db")
 }
