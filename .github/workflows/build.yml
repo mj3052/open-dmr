@@ -76,7 +76,7 @@ jobs:
         heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
 
         dockerfile_directory: ./staging
-        dockerfile_name: deployment.dockerfile½
+        dockerfile_name: deployment.dockerfile
         process_type: web
 
     - name: Build and push

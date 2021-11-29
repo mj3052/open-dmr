@@ -1,19 +1,33 @@
 package main
 
 type VehicleBaseInfo struct {
-	VIN         string `xml:"KoeretoejOplysningStelNummer"`
-	Status      string `xml:"KoeretoejOplysningStatus"`
-	WeightSelf  int    `xml:"KoeretoejOplysningEgenVaegt"`
-	WeightTotal int    `xml:"KoeretoejOplysningTekniskTotalVaegt"`
-	WeightMax   int    `xml:"KoeretoejOplysningTotalVaegt"`
-	Axes        int    `xml:"KoeretoejOplysningAkselAntal"`
+	VIN    string `xml:"KoeretoejOplysningStelNummer"`
+	Status string `xml:"KoeretoejOplysningStatus"`
 
-	VehicleBrand   string `xml:"KoeretoejBetegnelseStruktur>KoeretoejMaerkeTypeNavn"`
-	VehicleModel   string `xml:"KoeretoejBetegnelseStruktur>Model>KoeretoejModelTypeNavn"`
-	VehicleVariant string `xml:"KoeretoejBetegnelseStruktur>Variant>KoeretoejVariantTypeNavn"`
-	VehicleType    string `xml:"KoeretoejBetegnelseStruktur>Type>KoeretoejTypeTypeNavn"`
+	FirstRegistered string `xml:"KoeretoejOplysningFoersteRegistreringDato"`
 
-	VehicleColor string `xml:"KoeretoejFarveStruktur>FarveTypeStruktur>FarveTypeNavn"`
+	// Weight + Pull
+	WeightSelf  int `xml:"KoeretoejOplysningEgenVaegt"`
+	WeightTotal int `xml:"KoeretoejOplysningTekniskTotalVaegt"`
+	WeightMax   int `xml:"KoeretoejOplysningTotalVaegt"`
+	Axes        int `xml:"KoeretoejOplysningAkselAntal"`
+
+	// Brand, model, color
+	Brand   string `xml:"KoeretoejBetegnelseStruktur>KoeretoejMaerkeTypeNavn"`
+	Model   string `xml:"KoeretoejBetegnelseStruktur>Model>KoeretoejModelTypeNavn"`
+	Variant string `xml:"KoeretoejBetegnelseStruktur>Variant>KoeretoejVariantTypeNavn"`
+	Type    string `xml:"KoeretoejBetegnelseStruktur>Type>KoeretoejTypeTypeNavn"`
+	Color   string `xml:"KoeretoejFarveStruktur>FarveTypeStruktur>FarveTypeNavn"`
+
+	// Engine
+	EngineMileage    string  `xml:"KoeretoejMotorStruktur>KoeretoejMotorKmPerLiter"`
+	EngineKilometers float32 `xml:"KoeretoejMotorStruktur>KoeretoejMotorKilometerstand"`
+	EngineFuel       string  `xml:"KoeretoejMotorStruktur>DrivkraftTypeNavn"`
+	EngineCylinders  int     `xml:"KoeretoejMotorStruktur>KoeretoejMotorCylinderAntal"`
+	EngineVolume     float32 `xml:"KoeretoejMotorStruktur>KoeretoejMotorSlagVolumen"`
+	EngineEffect     float32 `xml:"KoeretoejMotorStruktur>KoeretoejMotorStoersteEffekt"`
+
+	ChassisType string `xml:"KarrosseriTypeStruktur>KarrosseriTypeNavn"`
 }
 
 type Vehicle struct {
@@ -22,7 +36,6 @@ type Vehicle struct {
 
 	BaseInfo VehicleBaseInfo `xml:"KoeretoejOplysningGrundStruktur" gorm:"embedded"`
 
-	End string `xml:"RegistreringNummerUdloebDato"`
-
+	End   string `xml:"RegistreringNummerUdloebDato"`
 	Usage string `xml:"KoeretoejAnvendelseStruktur>KoeretoejAnvendelseNavn"`
 }
