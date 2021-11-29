@@ -1,0 +1,77 @@
+name: Build open-dmr
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.17
+
+    - uses: actions/cache@v2
+      with:
+        path: |
+          ~/.cache/go-build
+          ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+
+    - name: Build
+      run: go build -v
+      working-directory: app
+
+    - name: Test
+      run: go test -v
+      working-directory: app
+
+    # - name: Stage packaging area
+    #   run: mkdir staging && mv app/open-dmr staging/ && cp deployment.dockerfile staging/deployment.dockerfile
+
+    # - name: Log in to the Container registry
+    #   uses: docker/login-action@v1
+    #   with:
+    #     registry: ${{ env.REGISTRY }}
+    #     username: ${{ github.actor }}
+    #     password: ${{ secrets.GITHUB_TOKEN }}
+
+    # - name: Extract metadata (tags, labels) for Docker
+    #   id: meta
+    #   uses: docker/metadata-action@v3
+    #   with:
+    #     images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+    # - name: Build, Push and Release a Docker container to Heroku.
+    #   uses: gonuit/heroku-docker-deploy@v1.3.3
+    #   with:
+    #     email: ${{ secrets.HEROKU_EMAIL }}
+    #     heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+    #     heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
+
+    #     dockerfile_directory: ./staging
+    #     dockerfile_name: deployment.dockerfile
+    #     process_type: web
+
+    # - name: Build and push
+    #   id: docker_build
+    #   uses: docker/build-push-action@v2
+    #   with:
+    #     push: true
+    #     context: staging/
+    #     file: deployment.dockerfile
+    #     tags: ${{ steps.meta.outputs.tags }}
+    #     labels: ${{ steps.meta.outputs.labels }}

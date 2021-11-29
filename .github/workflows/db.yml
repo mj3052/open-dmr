@@ -1,0 +1,59 @@
+name: Process DMR data
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Monday morning 3 o clock
+    - cron:  '0 3 * * 1'
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.17
+
+    - uses: actions/cache@v2
+      with:
+        path: |
+          ~/.cache/go-build
+          ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+
+    - name: Build
+      run: go build -v
+      working-directory: app
+
+    - name: Test
+      run: go test -v
+      working-directory: app
+
+    - name: Stage packaging area
+      run: mkdir staging && mv app/open-dmr staging/ && cp deployment.dockerfile staging/deployment.dockerfile
+
+    - name: Install data deps
+      run: sudo apt -y install aria2 lftp
+
+    - name: Download data (full)
+      run: ./download_data.sh
+
+    - name: Load data into DB
+      run: ./open-dmr -load ../data.zip
+      working-directory: staging
+
+    - name: DB Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: database
+        path: staging/dmr.db
