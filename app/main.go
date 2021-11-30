@@ -50,7 +50,7 @@ func main() {
 	var dataPath = flag.String("load", "", "Load data to DB from file")
 	flag.Parse()
 
-	db, err := gorm.Open(sqlite.Open("dmr.db"), &gorm.Config{Logger: logger.Default.LogMode(logger.Silent), SkipDefaultTransaction: false})
+	db, err := gorm.Open(sqlite.Open("dmr.db"), &gorm.Config{Logger: logger.Default.LogMode(logger.Silent), SkipDefaultTransaction: *dataPath != ""})
 
 	if err != nil {
 		log.Fatal(err)
