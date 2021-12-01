@@ -1,26 +1,20 @@
 package main
 
 import (
-	"log"
 	"os"
 	"testing"
 
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
+	"github.com/estraier/tkrzw-go"
 )
 
 func TestStorePlates(t *testing.T) {
-	os.Remove("test-db.db")
+	os.Remove("test-db.tkh")
 
-	db, err := gorm.Open(sqlite.Open("test-db.db"), &gorm.Config{SkipDefaultTransaction: true})
+	dbm := tkrzw.NewDBM()
+	dbm.Open("test-db.tkh", true,
+		tkrzw.ParseParams("truncate=true,num_buckets=10000"))
 
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	db.AutoMigrate(&Vehicle{})
-
-	vdb = &VehicleDB{db}
+	vdb = &VehicleDB{dbm}
 
 	v, err := vdb.VehicleLookup("XP22655")
 
@@ -40,5 +34,5 @@ func TestStorePlates(t *testing.T) {
 		t.Errorf("Test plate not correct??")
 	}
 
-	os.Remove("test-db.db")
+	os.Remove("test-db.tkh")
 }

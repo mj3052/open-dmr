@@ -3,15 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
-	"log"
 	"os"
 
+	"github.com/estraier/tkrzw-go"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
-
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 )
 
 var vdb *VehicleDB
@@ -50,16 +46,13 @@ func main() {
 	var dataPath = flag.String("load", "", "Load data to DB from file")
 	flag.Parse()
 
-	db, err := gorm.Open(sqlite.Open("dmr.db"), &gorm.Config{Logger: logger.Default.LogMode(logger.Silent), SkipDefaultTransaction: *dataPath != ""})
+	dbm := tkrzw.NewDBM()
+	dbm.Open("db.tkh", true,
+		tkrzw.ParseParams("truncate=true,num_buckets=10000"))
 
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	vdb = &VehicleDB{db}
+	vdb = &VehicleDB{dbm}
 
 	if *dataPath != "" {
-		db.AutoMigrate(&Vehicle{})
 		vdb.LoadData(*dataPath)
 		return
 	}

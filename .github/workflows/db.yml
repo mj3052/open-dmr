@@ -15,6 +15,10 @@ jobs:
   DB:
     runs-on: ubuntu-latest
     steps:
+
+    - name: Install xmllint
+      run: sudo apt-get install -y libtkrzw-dev
+
     - uses: actions/checkout@v2
 
     - name: Set up Go
@@ -56,4 +60,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: database
-        path: staging/dmr.db
+        path: staging/db.tkh
