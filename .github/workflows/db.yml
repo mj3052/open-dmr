@@ -15,8 +15,9 @@ jobs:
   DB:
     runs-on: ubuntu-latest
     steps:
-
     - name: Install libtkrzw
+      run: wget "http://launchpadlibrarian.net/570883977/libtkrzw1_1.0.21-1_arm64.deb" && sudo dpkg -i "libtkrzw1_1.0.21-1_arm64.deb"
+    - name: Install libtkrzw-dev
       run: wget "http://launchpadlibrarian.net/570883502/libtkrzw-dev_1.0.21-1_amd64.deb" && sudo dpkg -i "libtkrzw-dev_1.0.21-1_amd64.deb"
 
     - uses: actions/checkout@v2
