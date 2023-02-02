@@ -58,10 +58,11 @@ jobs:
       working-directory: staging
 
     - name: Tar files
-      run: tar -cvf db.tar staging/badger.db
+      run: tar -cvf db.tar ./badger.db
+      working-directory: staging
 
     - name: DB Artifact
       uses: actions/upload-artifact@v3
       with:
-        name: database
-        path: db.tar
+        name: database.tar
+        path: staging/db.tar
