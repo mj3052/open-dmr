@@ -43,13 +43,10 @@ func (vdb *VehicleDB) VehicleLookup(plate string) (*Vehicle, error) {
 		return nil, err
 	}
 
-	var vjs = ""
-	if vjs != "" {
-		json.Unmarshal([]byte(vjs), &vehicle)
-	}
 	if vehicle.Plate != "" {
 		return &vehicle, nil
 	}
+
 	return &vehicle, &VehicleNotFound{}
 }
 

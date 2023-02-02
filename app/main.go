@@ -23,7 +23,8 @@ func plateLookup(c echo.Context) error {
 	vehicle, err := vdb.VehicleLookup(plate)
 
 	if err != nil {
-		return c.JSON(404, jsonError{"Not found"})
+		fmt.Printf("%+v\n", err)
+		return c.JSON(404, jsonError{"Plate Not found :)"})
 	}
 
 	return c.JSONPretty(200, vehicle, "    ")
