@@ -46,15 +46,15 @@ jobs:
     - name: Stage packaging area
       run: mkdir staging && mv app/open-dmr staging/
 
-    # - name: Install data deps
-    #   run: sudo apt -y install aria2 lftp
+    - name: Install data deps
+      run: sudo apt -y install aria2 lftp
 
-    # - name: Download data (full)
-    #   run: ./download_data.sh
+    - name: Download data (full)
+      run: ./download_data.sh
 
     - name: Load data into DB
-      # run: ./open-dmr -load ../data.zip
-      run: ./open-dmr -load ../app/test_data/snippet.xml.zip
+      run: ./open-dmr -load ../data.zip
+      # run: ./open-dmr -load ../app/test_data/snippet.xml.zip
       working-directory: staging
 
     - name: Tar files
