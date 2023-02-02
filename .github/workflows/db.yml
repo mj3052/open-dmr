@@ -1,11 +1,13 @@
 name: Process DMR data
 
 on:
-  workflow_dispatch:
-  schedule:
-    # Monday morning 3 o clock
-    - cron:  '0 3 * * 1'
+  # workflow_dispatch:
+  # schedule:
+  #   # Monday morning 3 o clock
+  #   - cron:  '0 3 * * 1'
 
+  push:
+    
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
