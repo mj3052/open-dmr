@@ -3,9 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"os"
 
-	"github.com/estraier/tkrzw-go"
+	"github.com/dgraph-io/badger/v3"
+	"github.com/dgraph-io/badger/v3/options"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 )
@@ -46,11 +48,13 @@ func main() {
 	var dataPath = flag.String("load", "", "Load data to DB from file")
 	flag.Parse()
 
-	dbm := tkrzw.NewDBM()
-	dbm.Open("db.tkh", true,
-		tkrzw.ParseParams("truncate=true,num_buckets=10000"))
+	db, err := badger.Open(badger.DefaultOptions("./badger.db").WithCompression(options.ZSTD))
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
 
-	vdb = &VehicleDB{dbm}
+	vdb = &VehicleDB{db}
 
 	if *dataPath != "" {
 		vdb.LoadData(*dataPath)

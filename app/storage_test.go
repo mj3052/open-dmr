@@ -1,20 +1,24 @@
 package main
 
 import (
+	"log"
 	"os"
 	"testing"
 
-	"github.com/estraier/tkrzw-go"
+	"github.com/dgraph-io/badger/v3"
+	"github.com/dgraph-io/badger/v3/options"
 )
 
 func TestStorePlates(t *testing.T) {
-	os.Remove("test-db.tkh")
+	os.RemoveAll("badger-test.db")
 
-	dbm := tkrzw.NewDBM()
-	dbm.Open("test-db.tkh", true,
-		tkrzw.ParseParams("truncate=true,num_buckets=10000"))
+	db, err := badger.Open(badger.DefaultOptions("./badger-test.db").WithCompression(options.ZSTD))
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
 
-	vdb = &VehicleDB{dbm}
+	vdb = &VehicleDB{db}
 
 	v, err := vdb.VehicleLookup("XP22655")
 
