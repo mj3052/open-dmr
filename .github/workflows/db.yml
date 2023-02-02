@@ -54,7 +54,7 @@ jobs:
 
     - name: Load data into DB
       # run: ./open-dmr -load ../data.zip
-      run: ./open-dmr -load ../test_data/snippet.xml.zip
+      run: ./open-dmr -load ../app/test_data/snippet.xml.zip
       working-directory: staging
 
     - name: Tar files
