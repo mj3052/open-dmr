@@ -12,7 +12,7 @@ import (
 func TestStorePlates(t *testing.T) {
 	os.RemoveAll("vehicles-test.db")
 
-	db, err := gorm.Open(sqlite.Open("vehicles-test.db"), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open("vehicles-test.db"), &gorm.Config{SkipDefaultTransaction: true})
 
 	if err != nil {
 		log.Fatal(err)

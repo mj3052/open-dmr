@@ -52,7 +52,7 @@ func main() {
 	var dataPath = flag.String("load", "", "Load data to DB from file")
 	flag.Parse()
 
-	db, err := gorm.Open(sqlite.Open("vehicles.db"), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open("vehicles.db"), &gorm.Config{SkipDefaultTransaction: true})
 
 	// db, err := badger.Open(badger.DefaultOptions("./badger.db").WithCompression(options.ZSTD))
 	if err != nil {
