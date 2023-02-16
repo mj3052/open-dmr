@@ -38,6 +38,4 @@ func TestStorePlates(t *testing.T) {
 	if v.Plate != "XP22655" {
 		t.Errorf("Test plate not correct??")
 	}
-
-	os.Remove("test-db.tkh")
 }
