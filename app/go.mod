@@ -6,6 +6,8 @@ require (
 	github.com/dgraph-io/badger/v3 v3.2103.5
 	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/gommon v0.4.0
+	gorm.io/driver/sqlite v1.4.4
+	gorm.io/gorm v1.24.5
 )
 
 require (
@@ -20,9 +22,12 @@ require (
 	github.com/golang/protobuf v1.3.1 // indirect
 	github.com/golang/snappy v0.0.3 // indirect
 	github.com/google/flatbuffers v1.12.1 // indirect
+	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/klauspost/compress v1.12.3 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.17 // indirect
+	github.com/mattn/go-sqlite3 v1.14.15 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/stretchr/testify v1.7.1 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect

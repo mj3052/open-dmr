@@ -6,11 +6,14 @@ import (
 	"log"
 	"os"
 
-	"github.com/dgraph-io/badger/v3"
-	"github.com/dgraph-io/badger/v3/options"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
+
+// Sqlite driver based on GGO
+// "github.com/glebarez/sqlite" // Pure go SQLite driver, checkout https://github.com/glebarez/sqlite for details
 
 var vdb *VehicleDB
 
@@ -49,13 +52,15 @@ func main() {
 	var dataPath = flag.String("load", "", "Load data to DB from file")
 	flag.Parse()
 
-	db, err := badger.Open(badger.DefaultOptions("./badger.db").WithCompression(options.ZSTD))
+	db, err := gorm.Open(sqlite.Open("vehicles.db"), &gorm.Config{})
+
+	// db, err := badger.Open(badger.DefaultOptions("./badger.db").WithCompression(options.ZSTD))
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer db.Close()
 
 	vdb = &VehicleDB{db}
+	vdb.Migrate()
 
 	if *dataPath != "" {
 		vdb.LoadData(*dataPath)

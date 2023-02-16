@@ -5,20 +5,21 @@ import (
 	"os"
 	"testing"
 
-	"github.com/dgraph-io/badger/v3"
-	"github.com/dgraph-io/badger/v3/options"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
 
 func TestStorePlates(t *testing.T) {
-	os.RemoveAll("badger-test.db")
+	os.RemoveAll("vehicles-test.db")
 
-	db, err := badger.Open(badger.DefaultOptions("./badger-test.db").WithCompression(options.ZSTD))
+	db, err := gorm.Open(sqlite.Open("vehicles-test.db"), &gorm.Config{})
+
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer db.Close()
 
 	vdb = &VehicleDB{db}
+	vdb.Migrate()
 
 	v, err := vdb.VehicleLookup("XP22655")
 

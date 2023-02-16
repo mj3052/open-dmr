@@ -1,17 +1,14 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"strings"
 
-	"github.com/dgraph-io/badger/v3"
-	"github.com/labstack/gommon/log"
+	"gorm.io/gorm"
 )
 
 type VehicleDB struct {
 	// db *tkrzw.DBM
-	db *badger.DB
+	db *gorm.DB
 }
 
 type VehicleNotFound struct{}
@@ -24,24 +21,22 @@ func (m *VehicleNotFound) Error() string {
 func (vdb *VehicleDB) VehicleLookup(plate string) (*Vehicle, error) {
 	var vehicle Vehicle
 
-	err := vdb.db.View(func(txn *badger.Txn) error {
-		// Your code here…
-		item, err := txn.Get([]byte(strings.ToUpper(plate)))
+	vdb.db.Take(&vehicle, "plate = ?", plate)
 
-		if err != nil {
-			return err
-		}
+	// err := vdb.db.View(func(txn *badger.Txn) error {
+	// 	// Your code here…
+	// 	item, err := txn.Get([]byte(strings.ToUpper(plate)))
 
-		err = item.Value(func(val []byte) error {
-			json.Unmarshal([]byte(val), &vehicle)
-			return nil
-		})
-		return nil
-	})
+	// 	if err != nil {
+	// 		return err
+	// 	}
 
-	if err != nil {
-		return nil, err
-	}
+	// 	err = item.Value(func(val []byte) error {
+	// 		json.Unmarshal([]byte(val), &vehicle)
+	// 		return nil
+	// 	})
+	// 	return nil
+	// })
 
 	if vehicle.Plate != "" {
 		return &vehicle, nil
@@ -50,13 +45,20 @@ func (vdb *VehicleDB) VehicleLookup(plate string) (*Vehicle, error) {
 	return &vehicle, &VehicleNotFound{}
 }
 
+func (vdb *VehicleDB) Migrate() {
+	vdb.db.AutoMigrate(&Vehicle{})
+}
+
 func (vdb *VehicleDB) LoadData(filename string) {
 	p := ParseDataFile(filename, "Statistik", true)
 
-	wb := vdb.db.NewWriteBatch()
-	defer wb.Flush()
-
 	i := 0
+
+	bufferSize := 5000
+	upsertBatchSize := 1000
+
+	var buffer = make([]Vehicle, 0, bufferSize)
+
 	for vehicle := range p {
 
 		// Skip empty
@@ -64,20 +66,28 @@ func (vdb *VehicleDB) LoadData(filename string) {
 			continue
 		}
 
-		v, err := json.Marshal(vehicle)
+		buffer = append(buffer, vehicle)
 
-		if err != nil {
-			log.Error(err)
-			fmt.Printf("Error: %+v\n", err)
-			continue
-		}
+		// v, err := json.Marshal(vehicle)
 
-		err = wb.Set([]byte(strings.ToUpper(vehicle.Plate)), v)
+		// if err != nil {
+		// 	log.Error(err)
+		// 	fmt.Printf("Error: %+v\n", err)
+		// 	continue
+		// }
+
+		// err = wb.Set([]byte(strings.ToUpper(vehicle.Plate)), v)
 		i++
 
-		if i%1000 == 0 {
+		if len(buffer) == bufferSize {
+			vdb.db.CreateInBatches(buffer, upsertBatchSize)
+			buffer = buffer[:0]
 			fmt.Printf("%d items inserted\n", i)
 		}
+	}
+
+	if len(buffer) > 0 {
+		vdb.db.CreateInBatches(buffer, upsertBatchSize)
 	}
 
 }

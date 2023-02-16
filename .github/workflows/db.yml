@@ -58,7 +58,7 @@ jobs:
       working-directory: staging
 
     - name: Tar files
-      run: tar -cvf db.tar ./badger.db
+      run: tar -cvf db.tar ./vehicles.db
       working-directory: staging
 
     - name: DB Artifact
